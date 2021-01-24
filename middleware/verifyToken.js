@@ -9,6 +9,7 @@ function auth(req, res, next) {
  }
  try {
   const verified = jwt.verify(token, process.env.TOKEN_SECRET);
+
   req.id = verified._id
   next();
  } catch (err) {

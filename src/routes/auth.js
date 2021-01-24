@@ -8,20 +8,21 @@ const { validationCheckAuth } = require('../../middleware/validationCheck')
 
 router.use(validationCheckAuth)
 
-const maxAge = 3 * 24 * 60 * 60;
+const maxAge = 3 * 24 * 60 * 60 * 1000;
 router.post('/', validationCheckAuth, async (req, res) => {
  try {
+
   const { email, password } = req.body;
   let authDatas = await dbHandler.getUsersData()
 
   if (authDatas) {
    let user = authDatas.find(item => item.email === email)
 
-   if (!user) return res.status(401).json({ message: `Incorrect credentials provided for ${user.email}`, status: "FAILED" });
+   if (!user) return res.status(401).json({ message: `Incorrect credentials provided for ${email}`, status: "FAILED", type: 'email' });
 
    let validPass = await bcrypt.compare(password, user.password)
 
-   if (!validPass) return res.status(401).json({ message: `Incorrect credentials provided for ${user.password}`, status: "FAILED" });
+   if (!validPass) return res.status(401).json({ message: `Incorrect credentials provided for ${password}`, status: "FAILED", type: 'password' });
 
    // create a token
    const token = jwt.sign({ id: user.id }, process.env.TOKEN_SECRET, { expiresIn: maxAge });

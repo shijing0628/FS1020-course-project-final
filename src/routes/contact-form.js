@@ -6,12 +6,13 @@ const verifyToken = require("../../middleware/verifyToken");
 const dbHandler = require('../dbhandler/dbHandler')
 const { validationCheckEntry } = require('../../middleware/validationCheck')
 
-router.use(validationCheckEntry)
+//router.use(validationCheckEntry)
 
-router.get('/entries', verifyToken, async (req, res) => {
+router.get('/entries', verifyToken, async (req, res, next) => {
  try {
   let entriesData = await dbHandler.getEntriesData()
   return res.status(200).json({ entriesData })
+
  }
  catch (err) {
   console.error(err)
